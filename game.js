@@ -47,6 +47,8 @@
   let nextSpawnAt = 0;
   let targetRole = 0;
   let nextTargetAt = 0;
+  let forceTargetNext = false;
+  let spawnsSinceTarget = 0;
   let freenTimeUntil = 0;
   let freenTimeReady = true;
   let entities = new Map();
@@ -116,6 +118,8 @@
     running = true; paused = false;
     entities.clear();
     targetRole = cfg.roles[Math.floor(Math.random() * cfg.roles.length)];
+    forceTargetNext = !!cfg.targetMode;
+    spawnsSinceTarget = 0;
     freenTimeUntil = 0; freenTimeReady = true;
     clearTimeout(bombTimer); bombTimer = 0;
     els.levelTag.textContent = `LEVEL ${index + 1}`;
@@ -158,8 +162,14 @@
     timeLeft -= dt;
 
     if (cfg.targetMode && now >= nextTargetAt) {
-      changeTarget();
-      nextTargetAt = now + (cfg.targetInterval || 5000);
+      const hasVisibleRole = [...entities.values()].some(item => item.role >= 0);
+      if (hasVisibleRole) {
+        // 等目前的人像消失後再換目標，避免玩家正要點擊時突然被改判。
+        nextTargetAt = now + 250;
+      } else {
+        changeTarget();
+        nextTargetAt = now + (cfg.targetInterval || 5000);
+      }
     }
 
     const inFreenTime = now < freenTimeUntil;
@@ -184,12 +194,19 @@
     const free = [...Array(9).keys()].filter(i => !entities.has(i));
     if (!free.length) return;
     const portalIndex = free[Math.floor(Math.random() * free.length)];
+    const mustSpawnTarget = cfg.targetMode && (forceTargetNext || spawnsSinceTarget >= 2 || timeLeft <= 5);
     const roll = Math.random();
-    const isBomb = roll < (cfg.bombChance || 0);
-    const isDog = !isBomb && roll < (cfg.bombChance || 0) + cfg.dogChance;
-    const isCactus = !isBomb && !isDog && roll < (cfg.bombChance || 0) + cfg.dogChance + (cfg.cactusChance || 0);
-    const isGuest = !isBomb && !isDog && !isCactus && roll < (cfg.bombChance || 0) + cfg.dogChance + (cfg.cactusChance || 0) + (cfg.guestChance || 0);
-    const role = (isBomb || isDog || isCactus || isGuest) ? -1 : cfg.roles[Math.floor(Math.random() * cfg.roles.length)];
+    const isBomb = !mustSpawnTarget && roll < (cfg.bombChance || 0);
+    const isDog = !mustSpawnTarget && !isBomb && roll < (cfg.bombChance || 0) + cfg.dogChance;
+    const isCactus = !mustSpawnTarget && !isBomb && !isDog && roll < (cfg.bombChance || 0) + cfg.dogChance + (cfg.cactusChance || 0);
+    const isGuest = !mustSpawnTarget && !isBomb && !isDog && !isCactus && roll < (cfg.bombChance || 0) + cfg.dogChance + (cfg.cactusChance || 0) + (cfg.guestChance || 0);
+    const role = mustSpawnTarget ? targetRole : ((isBomb || isDog || isCactus || isGuest) ? -1 : cfg.roles[Math.floor(Math.random() * cfg.roles.length)]);
+    if (role === targetRole) {
+      forceTargetNext = false;
+      spawnsSinceTarget = 0;
+    } else if (cfg.targetMode) {
+      spawnsSinceTarget += 1;
+    }
     const portal = els.portalGrid.children[portalIndex];
     const button = document.createElement("button");
     const kind = isBomb ? "bomb" : (isDog ? "dog" : (isCactus ? "cactus" : (isGuest ? "guest" : "role")));
@@ -330,6 +347,8 @@
   function changeTarget() {
     const choices = cfg.roles.filter(r => r !== targetRole);
     targetRole = choices[Math.floor(Math.random() * choices.length)];
+    forceTargetNext = true;
+    spawnsSinceTarget = 0;
     updateTarget();
     els.targetPanel.classList.remove("change");
     void els.targetPanel.offsetWidth;
