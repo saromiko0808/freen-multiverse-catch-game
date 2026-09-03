@@ -22,10 +22,10 @@
       <div class="intro-card">
         <span class="eyebrow">MULTIVERSE MISSION</span>
         <h2 id="mapTitle">找出每個宇宙的 Freen！</h2>
-        <p>捕捉本關目標、累積分數並解鎖宇宙。臘腸狗可以加分；友情客串與仙人掌可別誤觸！</p>
+        <p>完成 10 個宇宙的捕捉任務。臘腸狗可以加分；友情客串、仙人掌與後期炸彈可別誤觸！</p>
         <div class="progress-row">
           <span>目前星星</span>
-          <strong><span id="totalStars">0</span> / 15 ⭐</strong>
+          <strong><span id="totalStars">0</span> / 30 ⭐</strong>
         </div>
       </div>
 
@@ -63,6 +63,12 @@
 
       <div id="arena" class="arena" aria-label="角色捕捉區">
         <div class="freen-time" id="freenTimeBanner">✨ FREEN TIME ✨<small>慢動作・雙倍分數</small></div>
+        <div class="boom-effect" id="boomEffect" aria-hidden="true">
+          <span class="boom-core">BOOM!</span>
+          <span class="boom-ring ring-one"></span>
+          <span class="boom-ring ring-two"></span>
+          <span class="boom-spark">💥</span>
+        </div>
         <div class="portal-grid" id="portalGrid"></div>
         <div class="toast-layer" id="toastLayer" aria-live="polite"></div>
       </div>

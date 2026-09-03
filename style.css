@@ -105,6 +105,8 @@ button, img { -webkit-user-drag: none; }
 .entity.dog img { object-fit: contain; }
 .entity.cactus { inset: 13% 5px 5px; }
 .entity.guest img { filter: drop-shadow(0 5px 6px rgba(0,0,0,.26)) saturate(.92); }
+.entity.bomb { inset: 14% 8px 7px; animation: popUp .2s cubic-bezier(.18,.8,.3,1.15) forwards, bombWarn .42s .22s infinite alternate; }
+.entity.bomb img { filter: drop-shadow(0 0 7px #ff3a43) drop-shadow(0 4px 5px rgba(0,0,0,.35)); }
 .entity.wrong { filter: grayscale(.7); }
 .portal.hit { animation: portalHit .25s; }
 .portal.miss { animation: portalMiss .28s; }
@@ -116,6 +118,14 @@ button, img { -webkit-user-drag: none; }
 .freen-time small { display: block; margin-top: 4px; font-size: 11px; letter-spacing: .12em; }
 .freen-time.show { animation: freenTime 1.2s ease-out forwards; }
 .arena.slow { box-shadow: inset 0 0 55px #ffd34c, 0 0 30px rgba(255,199,42,.7); }
+.arena.exploding { animation: arenaShake .52s cubic-bezier(.36,.07,.19,.97); }
+.boom-effect { position: absolute; z-index: 20; inset: 0; display: grid; place-items: center; overflow: hidden; opacity: 0; pointer-events: none; background: radial-gradient(circle, rgba(255,238,113,.95) 0 8%, rgba(255,91,42,.86) 18%, rgba(116,12,35,.78) 43%, rgba(40,0,16,.82) 72%); }
+.boom-effect.show { animation: boomScreen .72s ease-out forwards; }
+.boom-core { position: relative; z-index: 4; color: #fff9c7; font-size: clamp(46px, 15vw, 76px); font-weight: 1000; font-style: italic; letter-spacing: -.06em; transform: rotate(-7deg); text-shadow: 0 4px 0 #9d1829, 0 8px 22px rgba(53,0,12,.72), 0 0 22px #ffdf4a; animation: boomWord .72s cubic-bezier(.16,.85,.3,1) forwards; }
+.boom-ring { position: absolute; width: 24%; aspect-ratio: 1; border: 14px solid rgba(255,225,82,.9); border-radius: 50%; box-shadow: 0 0 24px #ff7b22; }
+.boom-effect.show .ring-one { animation: boomRing .65s ease-out forwards; }
+.boom-effect.show .ring-two { animation: boomRing .65s .08s ease-out forwards; }
+.boom-spark { position: absolute; z-index: 3; font-size: 150px; filter: drop-shadow(0 0 22px #ffaf24); animation: boomSpark .7s ease-out forwards; }
 
 .overlay { position: fixed; z-index: 30; inset: 0; display: grid; place-items: center; padding: 18px; background: rgba(38,6,20,.68); backdrop-filter: blur(6px); }
 .modal { width: min(100%, 390px); border: 2px solid rgba(255,225,154,.8); border-radius: 28px; padding: 24px; background: linear-gradient(180deg, #fffdf9, #fff4ec); box-shadow: 0 25px 80px rgba(25,3,12,.35); text-align: center; }
@@ -143,6 +153,12 @@ button, img { -webkit-user-drag: none; }
 @keyframes pulse { 50% { transform: scale(1.05); } }
 @keyframes targetFlash { 50% { transform: scale(1.04); filter: brightness(1.15); } }
 @keyframes freenTime { 0% { opacity: 0; transform: translate(-50%,-50%) scale(.4); } 18%,70% { opacity: 1; transform: translate(-50%,-50%) scale(1); } 100% { opacity: 0; transform: translate(-50%,-65%) scale(1.08); } }
+@keyframes bombWarn { from { filter: brightness(.9); } to { filter: brightness(1.35) drop-shadow(0 0 9px #ff3747); } }
+@keyframes arenaShake { 10%,90% { transform: translateX(-2px); } 20%,80% { transform: translateX(5px) rotate(-.3deg); } 30%,50%,70% { transform: translateX(-8px) rotate(.4deg); } 40%,60% { transform: translateX(8px) rotate(-.4deg); } }
+@keyframes boomScreen { 0% { opacity: 0; filter: brightness(3); } 10%,72% { opacity: 1; } 100% { opacity: 0; filter: brightness(.7); } }
+@keyframes boomWord { 0% { opacity: 0; transform: rotate(-7deg) scale(.18); } 28% { opacity: 1; transform: rotate(-7deg) scale(1.18); } 58% { transform: rotate(-7deg) scale(1); } 100% { opacity: 0; transform: rotate(-7deg) scale(1.35); } }
+@keyframes boomRing { from { opacity: 1; transform: scale(.2); } to { opacity: 0; transform: scale(6); border-width: 2px; } }
+@keyframes boomSpark { 0% { opacity: 0; transform: scale(.15) rotate(-20deg); } 25% { opacity: 1; transform: scale(1.25) rotate(8deg); } 100% { opacity: 0; transform: scale(2.4) rotate(25deg); } }
 
 @media (max-height: 720px) {
   .topbar { min-height: 58px; padding-top: 8px; }
